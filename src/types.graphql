@@ -1,0 +1,21 @@
+type Query {
+  messages: [Message]
+  messageFromSenderId(senderId: ID): [Message]
+}
+
+type Mutation {
+  sendMessage(channel: String!, senderId: ID!, text: String!): Message
+  deleteMessage(messageId: ID!): ID
+}
+
+type Subscription {
+  channelMessage(channel: String!): Message
+  senderMessage(senderId: ID!): Message
+}
+
+type Message {
+  id: ID
+  text: String
+  channel: String
+  senderId: ID
+}
