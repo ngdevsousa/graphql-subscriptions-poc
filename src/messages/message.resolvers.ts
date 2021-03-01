@@ -8,6 +8,7 @@ import {
   Subscription
 } from "@nestjs/graphql";
 import { PubSubEngine } from "graphql-subscriptions";
+import { MessageInput } from "./dto/message-input.dto";
 import { MessageService, IMessage } from "./message.service";
 
 const CH_PREFIX = "channel";
@@ -30,24 +31,20 @@ export class MessageResolvers {
   }
 
   @Mutation("sendMessage")
-  async sendMessage(
-    @Args("text") text: string,
-    @Args("channel") channel: string,
-    @Args("senderId") senderId: string
-  ) {
-    const chEventName = `${CH_PREFIX}_${channel}`;
-    const sndEventName = `${SND_PREFIX}_${senderId}`;
+  async sendMessage(@Args() msg: MessageInput) {
+    const chEventName = `${CH_PREFIX}_${msg.channel}`;
+    const sndEventName = `${SND_PREFIX}_${msg.senderId}`;
     const newMessage: IMessage = {
-      text,
-      channel,
-      senderId
+      text: msg.text,
+      channel: msg.channel,
+      senderId: msg.senderId
     };
 
-    const msg = this.messageService.addMessage(newMessage);
-    this.pubSub.publish(chEventName, { ["channelMessage"]: msg });
-    this.pubSub.publish(sndEventName, { ["senderMessage"]: msg });
+    const createdMessage = this.messageService.addMessage(newMessage);
+    this.pubSub.publish(chEventName, { ["channelMessage"]: createdMessage });
+    this.pubSub.publish(sndEventName, { ["senderMessage"]: createdMessage });
 
-    return msg;
+    return createdMessage;
   }
 
   @Mutation("deleteMessage")
