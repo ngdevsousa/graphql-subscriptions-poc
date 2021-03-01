@@ -1,10 +1,10 @@
 import { Module } from "@nestjs/common";
 import { GraphQLModule } from "@nestjs/graphql";
 import { PubSub } from "graphql-subscriptions";
-import { AppController } from "./app.controller";
-import { AppService } from "./app.service";
-import { MessageResolvers } from "./message.resolvers";
-import { MessageService } from "./message.service";
+import { AppController } from "./health/health.controller";
+import { AppService } from "./health/health.service";
+import { MessageResolvers } from "./messages/message.resolvers";
+import { MessageService } from "./messages/message.service";
 
 @Module({
   imports: [
